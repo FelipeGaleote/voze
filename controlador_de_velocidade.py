@@ -9,7 +9,7 @@ class ControladorDeVelocidade:
     def __init__(self):
         self.DEMORA_BAIXA = 0.2
         self.DEMORA_NORMAL = 0.3
-        self.DEMORA_ALTA = 0.7
+        self.DEMORA_ALTA = 1
         self.demoraAtual = self.DEMORA_NORMAL
 
     def acelerar(self):
