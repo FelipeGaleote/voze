@@ -6,6 +6,8 @@ pyautogui.PAUSE = 0.0
 class AcaoComMouse:
     
     def __init__(self, controlador_de_velocidade):
+        #Por padrao as acoes sao continuas, ou seja, sao executadas num loop e podem ser canceladas
+        self.ehAcaoContinua = True
         self.DISTANCIA_PADRAO_DE_MOVIMENTO = 10
         self._controlador_de_velocidade = controlador_de_velocidade
         self.pyautogui = pyautogui
@@ -16,7 +18,10 @@ class AcaoComMouse:
         
     def iniciar(self):
         self.deveSerCancelada = False
-        while self.deveSerCancelada != True:
+        if (self.ehAcaoContinua):
+            while self.deveSerCancelada != True:
+                self.executarAcao()
+        else:
             self.executarAcao()
             
     def executarAcao(self):
