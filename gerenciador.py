@@ -9,6 +9,8 @@ from acao_com_mouse import AcaoComMouse
 import os
 import speech_recognition as sr
 from pocketsphinx import LiveSpeech, get_model_path
+import time
+import Xlib.threaded
 
 
 controlador_de_velocidade = ControladorDeVelocidade()
@@ -21,7 +23,7 @@ def iniciar_acao(acao):
     thread_acao.start()
 
 def ehEsquerda(palavra):
-    if ("left" in palavra):
+    if ("esquerda" in palavra):
         return True
     else:
         return False
@@ -45,19 +47,19 @@ def ehBaixo(palavra):
         return False
     
 def ehClique(palavra):
-    if ("Click" in palavra or "Clique" in palavra):
+    if ("clique" in palavra):
         return True
     else:
         return False
     
 def ehAcelerar(palavra):
-    if ("acelerar" in palavra):
+    if ("aumentar" in palavra):
         return True
     else:
         return False
     
 def ehDesacelerar(palavra):
-    if ("desacelerar" in palavra):
+    if ("reduzir" in palavra):
         return True
     else:
         return False
@@ -94,10 +96,13 @@ def ouvir_microfone():
     with sr.Microphone() as source:
         microfone.adjust_for_ambient_noise(source)
         while True:
+            start_timestamp = time.time()
             print("Diga alguma coisa: ")
             audio = microfone.listen(source)
             try:
+                print("Audio capturado " + str(time.time() - start_timestamp))
                 palavra = microfone.recognize_sphinx(audio, 'en-US')
+                print("Audio traduzido " + str(time.time() - start_timestamp))
                 print("Você disse: " + palavra)
                 processar_palavra(palavra)
             except:
@@ -106,22 +111,24 @@ def ouvir_microfone():
 
 def ouvir_microfone_br():
     model_path = get_model_path()
-    
-    speech = LiveSpeech(
+    print("Inicio")
+    decoder = LiveSpeech(
             verbose=False,
             sampling_rate=8000,
             buffer_size=2048,
             no_search=False,
             full_utt=False,
-            hmm=os.path.join(model_path,'model'),
-            lm=os.path.join(model_path,'model.lm.bin'),
-            dic=os.path.join(model_path,'model.dic')
+            hmm=os.path.join(model_path,'pt-br'),
+            lm=os.path.join(model_path,'pt-br.lm'),
+            dic=os.path.join(model_path,'cmudict-pt-br.dict')
             )
-    
-    for phrase in speech:
+    decoder.set_kws('keyphrase',os.path.join(model_path, 'keyphrase.key'))
+    decoder.set_search('keyphrase')
+    for phrase in decoder:
         print(phrase)
+        processar_palavra(str(phrase))
     
-#ouvir_microfone_br()
-ouvir_microfone()
+ouvir_microfone_br()
+#ouvir_microfone()
 
 
