@@ -10,7 +10,6 @@ import os
 import speech_recognition as sr
 from pocketsphinx import LiveSpeech, get_model_path
 import time
-import Xlib.threaded
 
 
 controlador_de_velocidade = ControladorDeVelocidade()
@@ -52,21 +51,32 @@ def ehClique(palavra):
     else:
         return False
     
-def ehAcelerar(palavra):
+def ehAumentar(palavra):
     if ("aumentar" in palavra):
         return True
     else:
         return False
     
-def ehDesacelerar(palavra):
+def ehReduzir(palavra):
     if ("reduzir" in palavra):
         return True
     else:
         return False
+    
+def ehParar(palavra):
+    if ("parar" in palavra):
+        return True
+    else:
+        return False
+    
 
 def processar_palavra(palavra):
     global acao
-    if ehEsquerda(palavra):
+    if ehReduzir(palavra):
+        controlador_de_velocidade.desacelerar()
+    elif ehAumentar(palavra):
+        controlador_de_velocidade.acelerar()
+    elif ehEsquerda(palavra):
         acao.cancelar()
         acao = MoverParaEsquerda(controlador_de_velocidade)
         iniciar_acao(acao)
@@ -86,49 +96,54 @@ def processar_palavra(palavra):
         acao.cancelar()
         acao = Clique(controlador_de_velocidade)
         acao.iniciar()
-    elif ehDesacelerar(palavra):
-        controlador_de_velocidade.desacelerar()
-    elif ehAcelerar(palavra):
-        controlador_de_velocidade.acelerar()
+    elif ehParar(palavra):
+        acao.cancelar()
+    
 
+#Esse metodo funciona bem no Linux e no Windows
 def ouvir_microfone():
-    microfone = sr.Recognizer()
-    with sr.Microphone() as source:
-        microfone.adjust_for_ambient_noise(source)
-        while True:
+    keywords = [("esquerda", 0.5), ("direita", 0.5), ("cima", 1), ("baixo", 1), ("clique", 0.8),
+                ("aumentar", 0.5), ("reduzir", 0.5), ("parar", 0.5),]
+    
+    while True:
+        microfone = sr.Recognizer()
+        with sr.Microphone() as source:
+            microfone.adjust_for_ambient_noise(source)
             start_timestamp = time.time()
             print("Diga alguma coisa: ")
-            audio = microfone.listen(source)
+            
             try:
+                audio = microfone.listen(source, phrase_time_limit=1, start=time.time())
                 print("Audio capturado " + str(time.time() - start_timestamp))
-                palavra = microfone.recognize_sphinx(audio, 'en-US')
+                palavra = microfone.recognize_sphinx(audio, 'pt-BR', keywords)
                 print("Audio traduzido " + str(time.time() - start_timestamp))
                 print("Você disse: " + palavra)
                 processar_palavra(palavra)
-            except:
+            except Exception as e: 
+                print(e)
                 print("Não entendi")
                 
 
+#Esse metodo funciona muito bem no Linux mas nao no Windows
 def ouvir_microfone_br():
-    model_path = get_model_path()
     print("Inicio")
     decoder = LiveSpeech(
-            verbose=False,
-            sampling_rate=8000,
+            verbose=True,
+            sampling_rate=16000,
             buffer_size=2048,
             no_search=False,
             full_utt=False,
-            hmm=os.path.join(model_path,'pt-br'),
-            lm=os.path.join(model_path,'pt-br.lm'),
-            dic=os.path.join(model_path,'cmudict-pt-br.dict')
+            hmm='pt-br',
+            lm='pt-br.lm.bin',
+            dic='cmudict-pt-br.dict'
             )
-    decoder.set_kws('keyphrase',os.path.join(model_path, 'keyphrase.key'))
+    decoder.set_kws('keyphrase', 'keyphrase.key')
     decoder.set_search('keyphrase')
     for phrase in decoder:
         print(phrase)
         processar_palavra(str(phrase))
     
-ouvir_microfone_br()
-#ouvir_microfone()
+#ouvir_microfone_br()
+ouvir_microfone()
 
 
