@@ -113,8 +113,6 @@ def processar_palavra(palavra):
         acao.cancelar()
         acao = Subir(controlador_de_velocidade)
         iniciar_acao(acao)
-    elif ehParar(palavra):
-        acao.cancelar()
     elif ehDesce(palavra):
         acao.cancelar()
         acao = Descer(controlador_de_velocidade)
@@ -123,6 +121,8 @@ def processar_palavra(palavra):
         acao.cancelar()
         acao = MoverParaCima(controlador_de_velocidade)
         iniciar_acao(acao)
+    elif ehParar(palavra):
+        acao.cancelar()
     
     
     
@@ -140,6 +140,7 @@ def ouvir_microfone():
     
     while True:
         microfone = sr.Recognizer()
+        microfone.phrase_threshold = 0.01
         with sr.Microphone() as source:
             microfone.adjust_for_ambient_noise(source)
             start_timestamp = time.time()
