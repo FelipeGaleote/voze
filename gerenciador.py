@@ -12,7 +12,10 @@ import os
 import speech_recognition as sr
 from pocketsphinx import LiveSpeech, get_model_path
 import time
+import shutil
 
+
+linguagem = 'pt-BR'
 
 controlador_de_velocidade = ControladorDeVelocidade()
 
@@ -66,7 +69,7 @@ def ehReduzir(palavra):
         return False
     
 def ehParar(palavra):
-    if ("parar" in palavra):
+    if ("pausa" in palavra):
         return True
     else:
         return False
@@ -123,13 +126,18 @@ def processar_palavra(palavra):
     
     
     
+def adicionar_modelos_ao_pocketsphinx(pocketsphinx_data_filepath):
+    caminho_voze = os.path.dirname(os.path.realpath(__file__))
+    print(os.path.join(caminho_voze, linguagem))
+    print(os.path.join(pocketsphinx_data_filepath, linguagem))
+    shutil.move(os.path.join(caminho_voze, linguagem), os.path.join(pocketsphinx_data_filepath, linguagem)) 
+
 
 #Esse metodo funciona bem no Linux e no Windows
 def ouvir_microfone():
     keywords = [("esquerda", 0.5), ("direita", 0.5), ("cima", 0.8), ("baixo", 1), ("clique", 0.9),
-                ("aumentar", 0.5), ("reduzir", 0.5), ("parar", 0.5), ("desce", 0.3), ("sobe", 0.3),]
+                ("aumentar", 0.5), ("reduzir", 0.5), ("pausa", 0.5)]
     
-    numero_audio = 0
     while True:
         microfone = sr.Recognizer()
         with sr.Microphone() as source:
@@ -138,18 +146,23 @@ def ouvir_microfone():
             print("Diga alguma coisa: ")
             
             try:
-                audio = microfone.listen(source, phrase_time_limit=1, start=time.time())
-                
+                audio = microfone.listen(source, phrase_time_limit=2)
                 print("Audio capturado " + str(time.time() - start_timestamp))
-                palavra = microfone.recognize_sphinx(audio, 'pt-BR', keywords)
+                palavra = microfone.recognize_sphinx(audio, linguagem, keywords)
                 print("Audio traduzido " + str(time.time() - start_timestamp))
                 print("Você disse: " + palavra)
-                numero_audio = numero_audio + 1
-                with open(palavra + str(numero_audio) + "microphone-results.wav", "wb") as f:
-                    f.write(audio.get_wav_data())
                 processar_palavra(palavra)
             except Exception as e: 
-                print(e)
+                if "missing" in str(e.args):
+                    diretorio = str(e.args).split("directory: ")[1]
+                    diretorio = diretorio.replace("\\\\", "\\")
+                    diretorio = diretorio.replace(linguagem, "")
+                    diretorio = diretorio.replace("\"", "").replace("'", "").replace(",", "").replace(")", "")
+                    adicionar_modelos_ao_pocketsphinx(diretorio)
+                else:
+                    print(e.args)
+                
+                #print(e)
                 print("Não entendi")
                 
 
