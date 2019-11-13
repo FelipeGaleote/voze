@@ -3,6 +3,7 @@ import getpass
 import urllib.request
 import zipfile
 import sys
+import platform
 
 USER_NAME = getpass.getuser()
 
@@ -58,6 +59,7 @@ def garantirImportDoModulo(module_name):
     else:
         instalarModulo(module_name)
 
+
 def adicionarAInicializacaoDoWindows():
     print("entrou")
     file_path = os.path.dirname(os.path.realpath(__file__))
@@ -66,10 +68,47 @@ def adicionarAInicializacaoDoWindows():
         print(bat_path)
         bat_file.write('python %s\iniciar.py \npause' % file_path)
 
-garantirImportDoModulo("pyautogui")
-garantirImportDoModulo("SpeechRecognition")
-garantirImportDoModulo("pocketsphinx")
-garantirImportDoModulo("PyAudio")
-adicionarAInicializacaoDoWindows()
-os.system('python %s\gerenciador.py' % os.path.dirname(os.path.realpath(__file__)))
+
+def instalarModuloLinux(module_name):
+    print("%s esta sendo instalado" % module_name)
+    os.system("pip install %s" % module_name)
+
+
+def garantirImportDoModuloLinux(module_name):    
+    if( module_exists(module_name)):
+        printOk(module_name)
+    elif module_name == "pocketsphinx":
+        instalarModuloPocketSphinxLinux(module_name)
+    elif module_name == "PyAudio":
+        instalarModuloPyAudioLinux(module_name)
+    else:
+        instalarModuloLinux(module_name)
+
+
+def instalarModuloPocketSphinxLinux(module_name):
+    print("%s esta sendo instalado" % module_name)
+    os.system("pip install %s" % module_name)
+
+
+def instalarModuloPyAudioLinux(module_name):
+    print("%s esta sendo instalado" % module_name)
+    os.system("sudo apt-get install python-pyaudio")
+    os.system("sudo apt-get install portaudio19-dev")
+    os.system("sudo apt-get install python-dev bison autoconf libtool-bin swig libpulse-dev")
+    os.system("pip install PyAudio")
+
+
+if(platform.system().lower() in "windows"):
+    garantirImportDoModulo("pyautogui")
+    garantirImportDoModulo("SpeechRecognition")
+    garantirImportDoModulo("pocketsphinx")
+    garantirImportDoModulo("PyAudio")
+    adicionarAInicializacaoDoWindows()
+    os.system('python %s\gerenciador.py' % os.path.dirname(os.path.realpath(__file__)))
+else:
+    garantirImportDoModuloLinux("pyautogui")
+    garantirImportDoModuloLinux("SpeechRecognition")
+    garantirImportDoModuloLinux("pocketsphinx")
+    garantirImportDoModuloLinux("PyAudio")
+    os.system('python %s/gerenciador.py' % os.path.dirname(os.path.realpath(__file__)))
 
