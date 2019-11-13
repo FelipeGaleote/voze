@@ -106,9 +106,10 @@ if(platform.system().lower() in "windows"):
     adicionarAInicializacaoDoWindows()
     os.system('python %s\gerenciador.py' % os.path.dirname(os.path.realpath(__file__)))
 else:
+    print("1")
     garantirImportDoModuloLinux("pyautogui")
     garantirImportDoModuloLinux("SpeechRecognition")
     garantirImportDoModuloLinux("pocketsphinx")
     garantirImportDoModuloLinux("PyAudio")
-    os.system('python %s/gerenciador.py' % os.path.dirname(os.path.realpath(__file__)))
+    os.system('python3 %s/gerenciador.py' % os.path.dirname(os.path.realpath(__file__)))
 

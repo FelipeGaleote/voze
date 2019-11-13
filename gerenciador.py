@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*- 
 from threading import Thread
 from mover_para_esquerda import MoverParaEsquerda
 from mover_para_direita import MoverParaDireita
@@ -13,6 +14,7 @@ import speech_recognition as sr
 from pocketsphinx import LiveSpeech, get_model_path
 import time
 import shutil
+import platform
 
 
 linguagem = 'pt-BR'
@@ -186,7 +188,10 @@ def ouvir_microfone_br():
         print(phrase)
         processar_palavra(str(phrase))
     
-#ouvir_microfone_br()
-ouvir_microfone()
+
+if(platform.system().lower() in "windows"):
+    ouvir_microfone()
+else: 
+    ouvir_microfone_br()
 
 
