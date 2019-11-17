@@ -103,6 +103,7 @@ if(platform.system().lower() in "windows"):
     garantirImportDoModulo("SpeechRecognition")
     garantirImportDoModulo("pocketsphinx")
     garantirImportDoModulo("PyAudio")
+    garantirImportDoModulo("playsound")
     adicionarAInicializacaoDoWindows()
     os.system('python %s\gerenciador.py' % os.path.dirname(os.path.realpath(__file__)))
 else:
@@ -111,5 +112,6 @@ else:
     garantirImportDoModuloLinux("SpeechRecognition")
     garantirImportDoModuloLinux("pocketsphinx")
     garantirImportDoModuloLinux("PyAudio")
+    garantirImportDoModuloLinux("playsound")
     os.system('python3 %s/gerenciador.py' % os.path.dirname(os.path.realpath(__file__)))
 

@@ -15,6 +15,7 @@ from pocketsphinx import LiveSpeech, get_model_path
 import time
 import shutil
 import platform
+from playsound import playsound
 
 
 linguagem = 'pt-BR'
@@ -125,6 +126,7 @@ def processar_palavra(palavra):
         iniciar_acao(acao)
     elif ehParar(palavra):
         acao.cancelar()
+        
     
     
     
@@ -163,6 +165,7 @@ def ouvir_microfone():
                     diretorio = diretorio.replace("\"", "").replace("'", "").replace(",", "").replace(")", "")
                     adicionar_modelos_ao_pocketsphinx(diretorio)
                 else:
+                    playsound('erro.mp3')
                     print(e.args)
                 
                 #print(e)
