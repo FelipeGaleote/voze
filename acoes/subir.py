@@ -1,4 +1,4 @@
-from acao_com_mouse import AcaoComMouse
+from .acao_com_mouse import AcaoComMouse
 import time
 
 

@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*- 
 from threading import Thread
-from mover_para_esquerda import MoverParaEsquerda
-from mover_para_direita import MoverParaDireita
-from mover_para_baixo import MoverParaBaixo
-from mover_para_cima import MoverParaCima
-from clique import Clique
-from descer import Descer
-from subir import Subir
+from acoes.mover_para_esquerda import MoverParaEsquerda
+from acoes.mover_para_direita import MoverParaDireita
+from acoes.mover_para_baixo import MoverParaBaixo
+from acoes.mover_para_cima import MoverParaCima
+from acoes.clique import Clique
+from acoes.descer import Descer
+from acoes.subir import Subir
 from controlador_de_velocidade import ControladorDeVelocidade
-from acao_com_mouse import AcaoComMouse
+from acoes.acao_com_mouse import AcaoComMouse
 import os
 import speech_recognition as sr
 from pocketsphinx import LiveSpeech, get_model_path

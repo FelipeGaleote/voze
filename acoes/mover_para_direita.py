@@ -4,7 +4,7 @@ Created on Sun Aug 18 19:04:04 2019
 
 @author: Felipe
 """
-from acao_com_mouse import AcaoComMouse
+from .acao_com_mouse import AcaoComMouse
 
 class MoverParaDireita(AcaoComMouse):
     
